@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>世界史クイズ</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4efe3;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .quiz-box {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+      color: #6b3f1d;
+    }
+
+    #question {
+      font-size: 22px;
+      margin: 25px 0;
+      font-weight: bold;
+    }
+
+    .choice {
+      display: block;
+      width: 100%;
+      margin: 12px 0;
+      padding: 14px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background: #e8d6bd;
+      cursor: pointer;
+    }
+
+    .choice:hover {
+      background: #d2b48c;
+    }
+
+    #result {
+      font-size: 22px;
+      margin: 20px;
+      font-weight: bold;
+    }
+
+    #nextBtn {
+      display: none;
+      padding: 12px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background: #6b3f1d;
+      color: white;
+      cursor: pointer;
+    }
+
+    #score {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-box">
+    <h1>世界史クイズ</h1>
+    <div id="count"></div>
+    <div id="question"></div>
+    <div id="choices"></div>
+    <div id="result"></div>
+    <button id="nextBtn" onclick="nextQuestion()">次の問題へ</button>
+    <div id="score"></div>
+  </div>
+
+<script>
+const quizData = [
+  {
+    question: "古代エジプトで王を何と呼んだ？",
+    choices: ["ファラオ", "カエサル", "スルタン", "皇帝"],
+    answer: "ファラオ"
+  },
+  {
+    question: "ピラミッドが多く作られた文明は？",
+    choices: ["エジプト文明", "インダス文明", "メソポタミア文明", "黄河文明"],
+    answer: "エジプト文明"
+  },
+  {
+    question: "ハンムラビ法典を作った王は？",
+    choices: ["ハンムラビ王", "アレクサンドロス大王", "ネロ", "始皇帝"],
+    answer: "ハンムラビ王"
+  },
+  {
+    question: "アレクサンドロス大王が広げた文化は？",
+    choices: ["ヘレニズム文化", "イスラム文化", "ルネサンス文化", "バロック文化"],
+    answer: "ヘレニズム文化"
+  },
+  {
+    question: "ローマ帝国で初代皇帝となった人物は？",
+    choices: ["アウグストゥス", "カエサル", "ネロ", "コンスタンティヌス"],
+    answer: "アウグストゥス"
+  },
+  {
+    question: "キリスト教を公認したローマ皇帝は？",
+    choices: ["コンスタンティヌス", "ネロ", "アウグストゥス", "トラヤヌス"],
+    answer: "コンスタンティヌス"
+  },
+  {
+    question: "中国を初めて統一した皇帝は？",
+    choices: ["始皇帝", "武帝", "劉邦", "孔子"],
+    answer: "始皇帝"
+  },
+  {
+    question: "儒教を広めた人物は？",
+    choices: ["孔子", "老子", "孟子", "孫子"],
+    answer: "孔子"
+  },
+  {
+    question: "イスラム教を始めた人物は？",
+    choices: ["ムハンマド", "イエス", "ブッダ", "モーセ"],
+    answer: "ムハンマド"
+  },
+  {
+    question: "フランク王国のカール大帝が戴冠された年は？",
+    choices: ["800年", "476年", "1066年", "1453年"],
+    answer: "800年"
+  },
+  {
+    question: "十字軍の目的地となった聖地は？",
+    choices: ["エルサレム", "ローマ", "メッカ", "コンスタンティノープル"],
+    answer: "エルサレム"
+  },
+  {
+    question: "モンゴル帝国を築いた人物は？",
+    choices: ["チンギス・ハン", "フビライ・ハン", "ティムール", "始皇帝"],
+    answer: "チンギス・ハン"
+  },
+  {
+    question: "ルネサンスが始まった地域は？",
+    choices: ["イタリア", "フランス", "ドイツ", "イギリス"],
+    answer: "イタリア"
+  },
+  {
+    question: "『モナ・リザ』を描いた人物は？",
+    choices: ["レオナルド・ダ・ヴィンチ", "ミケランジェロ", "ラファエロ", "ゴッホ"],
+    answer: "レオナルド・ダ・ヴィンチ"
+  },
+  {
+    question: "宗教改革を始めた人物は？",
+    choices: ["ルター", "カルヴァン", "ガリレオ", "コロンブス"],
+    answer: "ルター"
+  },
+  {
+    question: "アメリカ大陸に到達した航海者は？",
+    choices: ["コロンブス", "マゼラン", "バスコ・ダ・ガマ", "クック"],
+    answer: "コロンブス"
+  },
+  {
+    question: "世界一周を成し遂げた船隊を率いた人物は？",
+    choices: ["マゼラン", "コロンブス", "クック", "鄭和"],
+    answer: "マゼラン"
+  },
+  {
+    question: "フランス革命が始まった年は？",
+    choices: ["1789年", "1776年", "1815年", "1848年"],
+    answer: "1789年"
+  },
+  {
+    question: "ナポレオンが皇帝になった国は？",
+    choices: ["フランス", "イギリス", "ドイツ", "ロシア"],
+    answer: "フランス"
+  },
+  {
+    question: "アメリカ独立宣言が出された年は？",
+    choices: ["1776年", "1789年", "1812年", "1861年"],
+    answer: "1776年"
+  },
+  {
+    question: "産業革命が最初に起こった国は？",
+    choices: ["イギリス", "フランス", "ドイツ", "アメリカ"],
+    answer: "イギリス"
+  },
+  {
+    question: "第一次世界大戦が始まった年は？",
+    choices: ["1914年", "1918年", "1939年", "1945年"],
+    answer: "1914年"
+  },
+  {
+    question: "第二次世界大戦が終わった年は？",
+    choices: ["1945年", "1939年", "1918年", "1950年"],
+    answer: "1945年"
+  },
+  {
+    question: "国際連合が成立した年は？",
+    choices: ["1945年", "1919年", "1939年", "1955年"],
+    answer: "1945年"
+  },
+  {
+    question: "冷戦で対立した中心国は？",
+    choices: ["アメリカとソ連", "日本と中国", "イギリスとフランス", "ドイツとイタリア"],
+    answer: "アメリカとソ連"
+  },
+  {
+    question: "ベルリンの壁が崩壊した年は？",
+    choices: ["1989年", "1979年", "1991年", "2001年"],
+    answer: "1989年"
+  },
+  {
+    question: "ソ連が崩壊した年は？",
+    choices: ["1991年", "1989年", "1945年", "2000年"],
+    answer: "1991年"
+  },
+  {
+    question: "インド独立運動で有名な人物は？",
+    choices: ["ガンディー", "ネルソン・マンデラ", "毛沢東", "ホー・チ・ミン"],
+    answer: "ガンディー"
+  },
+  {
+    question: "南アフリカでアパルトヘイト撤廃に貢献した人物は？",
+    choices: ["ネルソン・マンデラ", "ガンディー", "キング牧師", "チャーチル"],
+    answer: "ネルソン・マンデラ"
+  },
+  {
+    question: "中華人民共和国が成立した年は？",
+    choices: ["1949年", "1911年", "1937年", "1966年"],
+    answer: "1949年"
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+
+function showQuestion() {
+  answered = false;
+  const q = quizData[currentQuestion];
+
+  document.getElementById("count").textContent =
+    `${currentQuestion + 1} / ${quizData.length} 問目`;
+
+  document.getElementById("question").textContent = q.question;
+  document.getElementById("choices").innerHTML = "";
+  document.getElementById("result").textContent = "";
+  document.getElementById("nextBtn").style.display = "none";
+
+  q.choices.forEach(choice => {
+    const button = document.createElement("button");
+    button.textContent = choice;
+    button.className = "choice";
+    button.onclick = () => checkAnswer(choice);
+    document.getElementById("choices").appendChild(button);
+  });
+
+  document.getElementById("score").textContent = `スコア：${score} 点`;
+}
+
+function checkAnswer(choice) {
+  if (answered) return;
+  answered = true;
+
+  const correct = quizData[currentQuestion].answer;
+
+  if (choice === correct) {
+    document.getElementById("result").textContent = "正解！";
+    document.getElementById("result").style.color = "green";
+    score++;
+  } else {
+    document.getElementById("result").textContent = `不正解！正解は「${correct}」`;
+    document.getElementById("result").style.color = "red";
+  }
+
+  document.getElementById("score").textContent = `スコア：${score} 点`;
+  document.getElementById("nextBtn").style.display = "inline-block";
+}
+
+function nextQuestion() {
+  currentQuestion++;
+
+  if (currentQuestion < quizData.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById("question").textContent = "クイズ終了！";
+  document.getElementById("choices").innerHTML = "";
+  document.getElementById("result").textContent =
+    `${quizData.length}問中 ${score}問 正解しました！`;
+  document.getElementById("nextBtn").style.display = "none";
+  document.getElementById("count").textContent = "";
+  document.getElementById("score").textContent = "";
+
+  const restartBtn = document.createElement("button");
+  restartBtn.textContent = "もう一度遊ぶ";
+  restartBtn.className = "choice";
+  restartBtn.onclick = () => {
+    currentQuestion = 0;
+    score = 0;
+    showQuestion();
+  };
+  document.getElementById("choices").appendChild(restartBtn);
+}
+
+showQuestion();
+</script>
+
+</body>
+</html>
